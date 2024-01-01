@@ -19,8 +19,8 @@ http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/
 		<wsc:connection wsdlLocation="http://localhost:8080/ws/missions.wsdl" service="CountriesPortService" port="CountriesPortSoap11" address="http://localhost:8080/ws" />
 	</wsc:config>
 	<flow name="hellmuleFlow" doc:id="86e2508e-ee58-4ea3-b4e4-4edd230c13d6" >
-		<http:listener doc:name="Listener" doc:id="2ff8cec6-0160-4d55-aa7b-e60162739e37" config-ref="HTTP_Listener_config" path="/missions/{id}" allowedMethods="GET" outputMimeType="application/json"/>
-		<wsc:consume doc:name="Consume" doc:id="32e9395d-1cbc-4251-8d8b-7950e0d8ca95" config-ref="Web_Service_Consumer_Config1" operation="getMission">
+		<http:listener doc:name="Http Listener" doc:id="2ff8cec6-0160-4d55-aa7b-e60162739e37" config-ref="HTTP_Listener_config" path="/missions/{id}" allowedMethods="GET" outputMimeType="application/json"/>
+		<wsc:consume doc:name="SOAP Client" doc:id="32e9395d-1cbc-4251-8d8b-7950e0d8ca95" config-ref="Web_Service_Consumer_Config1" operation="getMission">
 			<wsc:message >
 				<wsc:body ><![CDATA[#[output application/xml
 ns ns0 http://spring.io/guides/gs-producing-web-service
