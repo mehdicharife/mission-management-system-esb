@@ -17,26 +17,22 @@ type: string]]></types:shape>
       <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
 type: object
 properties:
+    id:
+      type: number
     title:
         type: string
     description:
         type: string]]></types:shape>
     </types:type>
+    <types:type name="Object" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+    <types:type name="Mission" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
   </types:catalog>
-  <types:enrichment select="#d40f2f2e-036c-4042-8aca-d9525b8c1d7b">
-    <types:processor-declaration>
-      <types:input-event>
-        <types:message>
-          <types:payload type="id"/>
-        </types:message>
-      </types:input-event>
-      <types:output-event>
-        <types:message>
-          <types:payload type="id"/>
-        </types:message>
-      </types:output-event>
-    </types:processor-declaration>
-  </types:enrichment>
   <types:enrichment select="#ddf39cb4-9d71-4c97-85d8-c044ea85104b">
     <types:processor-declaration>
       <types:output-event>
@@ -45,5 +41,19 @@ properties:
         </types:message>
       </types:output-event>
     </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#32e9395d-1cbc-4251-8d8b-7950e0d8ca95">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="id"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="body" type="id"/>
+      </types:inputs>
+    </types:operation-declaration>
   </types:enrichment>
 </types:mule>

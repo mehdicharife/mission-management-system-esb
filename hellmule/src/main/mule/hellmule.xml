@@ -20,16 +20,6 @@ http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/
 	</wsc:config>
 	<flow name="hellmuleFlow" doc:id="86e2508e-ee58-4ea3-b4e4-4edd230c13d6" >
 		<http:listener doc:name="Listener" doc:id="2ff8cec6-0160-4d55-aa7b-e60162739e37" config-ref="HTTP_Listener_config" path="/missions/{id}" allowedMethods="GET" outputMimeType="application/json"/>
-		<ee:transform doc:name="Transform Message" doc:id="d40f2f2e-036c-4042-8aca-d9525b8c1d7b" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
----
-{
-"missionId": attributes.uriParams.'id'
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
 		<wsc:consume doc:name="Consume" doc:id="32e9395d-1cbc-4251-8d8b-7950e0d8ca95" config-ref="Web_Service_Consumer_Config1" operation="getMission">
 			<wsc:message >
 				<wsc:body ><![CDATA[#[output application/xml
@@ -37,7 +27,7 @@ ns ns0 http://spring.io/guides/gs-producing-web-service
 ---
 {
 	ns0#getMissionRequest: {
-		ns0#id: null
+		ns0#id: attributes.uriParams.'id'
 	}
 }]]]></wsc:body>
 			</wsc:message>
@@ -47,12 +37,11 @@ ns ns0 http://spring.io/guides/gs-producing-web-service
 				<ee:set-payload ><![CDATA[%dw 2.0
 ns ns0 http://spring.io/guides/gs-producing-web-service
 output application/json
-
 ---
 {
-	"title": payload.body.ns0#getMissionResponse.ns0#mission.id,
-	"description": payload.body.ns0#getMissionResponse.ns0#mission.description
-	
+	"title": payload.body.ns0#getMissionResponse.ns0#mission.ns0#title,
+	"description": payload.body.ns0#getMissionResponse.ns0#mission.ns0#description,
+	"id": payload.body.ns0#getMissionResponse.ns0#mission.ns0#id
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
