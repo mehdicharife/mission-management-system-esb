@@ -18,7 +18,19 @@ http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/
 	<wsc:config name="Web_Service_Consumer_Config1" doc:name="Web Service Consumer Config" doc:id="e9201a29-4579-447a-ac87-188c0a296fc0" >
 		<wsc:connection wsdlLocation="http://localhost:8080/ws/missions.wsdl" service="CountriesPortService" port="CountriesPortSoap11" address="http://localhost:8080/ws" />
 	</wsc:config>
-	<flow name="hellmuleFlow" doc:id="86e2508e-ee58-4ea3-b4e4-4edd230c13d6" >
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="22b57e2e-7ae7-4d8c-9c34-7be558ae7f50" basePath="/graphql" >
+		<http:request-connection host="localhost" port="8090" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="089a4ebc-0a6f-4e84-8c91-45a75ddc3309" >
+		<http:request-connection host="localhost" port="8090" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration2" doc:name="HTTP Request configuration" doc:id="be2b90a1-477d-4d4e-bc6d-637636c43161" >
+		<http:request-connection host="http://localhost" port="8090" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration3" doc:name="HTTP Request configuration" doc:id="138affa1-387f-4b9c-abbf-79465c115895" >
+		<http:request-connection host="localhost" port="8090" />
+	</http:request-config>
+	<flow name="REST-SOAP proxy" doc:id="86e2508e-ee58-4ea3-b4e4-4edd230c13d6" >
 		<http:listener doc:name="Http Listener" doc:id="2ff8cec6-0160-4d55-aa7b-e60162739e37" config-ref="HTTP_Listener_config" path="/missions/{id}" allowedMethods="GET" outputMimeType="application/json"/>
 		<wsc:consume doc:name="SOAP Client" doc:id="32e9395d-1cbc-4251-8d8b-7950e0d8ca95" config-ref="Web_Service_Consumer_Config1" operation="getMission">
 			<wsc:message >
@@ -42,6 +54,30 @@ output application/json
 	"title": payload.body.ns0#getMissionResponse.ns0#mission.ns0#title,
 	"description": payload.body.ns0#getMissionResponse.ns0#mission.ns0#description,
 	"id": payload.body.ns0#getMissionResponse.ns0#mission.ns0#id
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="REST-GraphQL proxy" doc:id="b875021a-7409-400a-8f57-35ba23a63b69" >
+		<http:listener doc:name="Listener" doc:id="69264133-7b3b-45ef-91ec-bd2d9c361929" config-ref="HTTP_Listener_config" path="/professors/{id}"/>
+		<http:request method="POST" doc:name="Request" doc:id="a15a9654-8fa3-45fa-9546-2800bcbcfc9b" config-ref="HTTP_Request_configuration3" path="/graphql">
+			<http:body ><![CDATA[#[%dw 2.0
+output application/json
+var id = attributes.uriParams.'id' as String // Ensure id is treated as a String
+---
+{
+    query: "query ProfessorDetails { professorById(id: " ++ (id default "null") ++ ") { id, firstName, lastName}}"
+}]]]></http:body>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="5be60420-5735-43fe-b750-20120a7608a4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id": payload.data.professorById.id,
+	"firstName": payload.data.professorById.firstName,
+	"lastName": payload.data.professorById.lastName
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
